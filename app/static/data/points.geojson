@@ -1,0 +1,8 @@
+{
+    "type": "FeatureCollection",
+                                                                                    
+    "features": [
+        { "type": "Feature", "id": 0, "properties": { "NAME": "Pippo", "DISCHARGE": "8", "RIVER": "a", "REGION": "foo" }, "geometry": { "type": "Point", "coordinates": [44.750378, 7.5605197] } },
+        { "type": "Feature", "id": 1, "properties": { "NAME": "Pluto", "DISCHARGE": "7", "RIVER": "b", "REGION": "foo2"}, "geometry": { "type": "Point", "coordinates": [44.750378, 7.5605197] } }
+    ]
+}

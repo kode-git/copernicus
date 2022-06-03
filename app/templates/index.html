@@ -46,7 +46,7 @@
             </div>
           </form>
           <ul class="nav navbar-nav">
-            <li><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="about-btn"><i class="fa fa-question-circle white"></i>&nbsp;&nbsp;About</a></li>
+           <!--<li><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="about-btn"><i class="fa fa-question-circle white"></i>&nbsp;&nbsp;About</a></li>
             <li class="dropdown">
               <a id="toolsDrop" href="#" role="button" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-globe white"></i>&nbsp;&nbsp;Tools <b class="caret"></b></a>
               <ul class="dropdown-menu">
@@ -65,7 +65,7 @@
                   <li><a href="{{ url_for('static',filename='data/DOITT_MUSEUM_01_13SEPT2010.geojson') }}" download="museums.geojson" target="_blank" data-toggle="collapse" data-target=".navbar-collapse.in"><i class="fa fa-download"></i>&nbsp;&nbsp;Museums</a></li>
                 </ul>
             </li>
-            <li class="hidden-xs"><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="list-btn"><i class="fa fa-list white"></i>&nbsp;&nbsp;POI List</a></li>
+            <li class="hidden-xs"><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="list-btn"><i class="fa fa-list white"></i>&nbsp;&nbsp;POI List</a></li>-->
           </ul>
         </div><!--/.navbar-collapse -->
       </div>
@@ -95,6 +95,7 @@
               </div>
             </div>
             <div class="sidebar-table">
+              <canvas id="lineChart"></canvas>
               <table class="table table-hover" id="feature-list">
                 <thead class="hidden">
                   <tr>
@@ -108,7 +109,7 @@
                   <tr>
                 </thead>
                 <tbody class="list"></tbody>
-              </table>
+              </table> 
             </div>
           </div>
         </div>
@@ -295,6 +296,7 @@
 
     <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.20.0/js/mdb.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.10.5/typeahead.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.3/handlebars.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/list.js/1.1.1/list.min.js"></script>
@@ -303,5 +305,7 @@
     <script src="https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-locatecontrol/v0.43.0/L.Control.Locate.min.js"></script>
     <script src="{{ url_for('static',filename='assets/leaflet-groupedlayercontrol/leaflet.groupedlayercontrol.js') }}"></script>
     <script src="{{ url_for('static',filename='assets/js/app.js') }}"></script>
+    <script src="{{ url_for('static',filename='assets/js/plot.js') }}"></script>
+
   </body>
 </html>
