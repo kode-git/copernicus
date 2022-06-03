@@ -83,6 +83,7 @@ input[type="radio"], input[type="checkbox"] {
 }
 .table {
   margin-bottom: 0px;
+  margin-top: 50px;
 }
 .navbar .navbar-brand {
   font-weight: bold;
@@ -174,4 +175,8 @@ input[type="radio"], input[type="checkbox"] {
   .leaflet-control-container {
     display: none !important;
   }
+}
+
+#lineChart{
+  margin-top: 100%;
 }
