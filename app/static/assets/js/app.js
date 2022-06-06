@@ -104,8 +104,55 @@ var markerClusters = new L.MarkerClusterGroup({
   spiderfyOnMaxZoom: true,
   showCoverageOnHover: true,
   zoomToBoundsOnClick: true,
-  disableClusteringAtZoom: 15
+  disableClusteringAtZoom: 12
 });
+
+function plot(coords) {
+  $.ajax({
+      type: "GET",
+      url: "/plot?coords="+coords,
+      dataType: "json",
+      success: function(msg) {
+        var ctxL = document.getElementById("lineChart").getContext('2d');
+        var myLineChart = new Chart(ctxL, {
+          type: 'line',
+          data: {
+            labels: Array.from(new Array(msg.data.length),(val,index)=> index),
+            datasets: [{
+              label: "Data",
+              data: msg.data,
+              backgroundColor: [
+                'rgba(105, 0, 132, .2)',
+              ],
+              borderColor: [
+                'rgba(200, 99, 132, .7)',
+              ],
+              borderWidth: 1,
+              pointRadius: 0
+            }/*,
+            {
+              label: "My Second dataset",
+              data: [28, 48, 40, 19, 86, 27, 90],
+              backgroundColor: [
+                'rgba(0, 137, 132, .2)',
+              ],
+              borderColor: [
+                'rgba(0, 10, 130, .7)',
+              ],
+              borderWidth: 2
+            }*/
+            ]
+          },
+          options: {
+            responsive: true
+          }
+        });
+      },
+      error: function (xhr, status, error) {
+          console.log(error);
+      }
+  });
+}
 
 var measuresLayer = L.geoJson(null);
 var measures = L.geoJson(null, {
@@ -114,7 +161,7 @@ var measures = L.geoJson(null, {
     return L.marker(latlng, {
       icon: L.icon({
         iconUrl: "static/assets/img/dot.png",
-        iconSize: [4, 4],
+        iconSize: [8, 8],
         iconAnchor: [12, 28],
         popupAnchor: [0, -25]
       }),
@@ -123,11 +170,12 @@ var measures = L.geoJson(null, {
     });
   },
   onEachFeature: function (feature, layer) {
-    if (feature.properties) {
-      //var content = "<tr><th>Name</th><td>" + feature.properties.NAME + "</td></tr>" + "<tr><th>Region</th><td>" + feature.properties.REGION + "</td></tr>" + "<tr><th>River</th><td>" + feature.properties.RIVER + "</td></tr>" + "<tr><th>Discharge</th><td>" + feature.properties.DISCHARGE + "</td></tr>";
+    if (feature.name) {
+      var content = "<tr><th>River</th><td>" + feature.name + "</td></tr>" ;
       layer.on({
         click: function (e) {
           syncSidebar(content)
+          plot(feature.geometry.coordinates)
           /*$("#feature-title").html(feature.properties.NAME);
           $("#feature-info").html(content);
           $("#featureModal").modal("show");
