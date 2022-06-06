@@ -102,28 +102,29 @@ var highlightStyle = {
 /* Single marker cluster layer to hold all clusters */
 var markerClusters = new L.MarkerClusterGroup({
   spiderfyOnMaxZoom: true,
-  showCoverageOnHover: false,
+  showCoverageOnHover: true,
   zoomToBoundsOnClick: true,
-  disableClusteringAtZoom: 14
+  disableClusteringAtZoom: 15
 });
 
 var measuresLayer = L.geoJson(null);
 var measures = L.geoJson(null, {
   pointToLayer: function (feature, latlng) {
+    //console.log(invertedLatLng, feature)
     return L.marker(latlng, {
       icon: L.icon({
         iconUrl: "static/assets/img/dot.png",
-        iconSize: [24, 28],
+        iconSize: [4, 4],
         iconAnchor: [12, 28],
         popupAnchor: [0, -25]
       }),
-      title: feature.properties.NAME,
+      title: feature.id,
       riseOnHover: true
     });
   },
   onEachFeature: function (feature, layer) {
     if (feature.properties) {
-      var content = "<tr><th>Name</th><td>" + feature.properties.NAME + "</td></tr>" + "<tr><th>Region</th><td>" + feature.properties.REGION + "</td></tr>" + "<tr><th>River</th><td>" + feature.properties.RIVER + "</td></tr>" + "<tr><th>Discharge</th><td>" + feature.properties.DISCHARGE + "</td></tr>";
+      //var content = "<tr><th>Name</th><td>" + feature.properties.NAME + "</td></tr>" + "<tr><th>Region</th><td>" + feature.properties.REGION + "</td></tr>" + "<tr><th>River</th><td>" + feature.properties.RIVER + "</td></tr>" + "<tr><th>Discharge</th><td>" + feature.properties.DISCHARGE + "</td></tr>";
       layer.on({
         click: function (e) {
           syncSidebar(content)
@@ -205,36 +206,6 @@ var zoomControl = L.control.zoom({
 }).addTo(map);
 
 /* GPS enabled geolocation control set to follow the user's location */
-var locateControl = L.control.locate({
-  position: "bottomright",
-  drawCircle: true,
-  follow: true,
-  setView: true,
-  keepCurrentZoomLevel: true,
-  markerStyle: {
-    weight: 1,
-    opacity: 0.8,
-    fillOpacity: 0.8
-  },
-  circleStyle: {
-    weight: 1,
-    clickable: false
-  },
-  icon: "fa fa-location-arrow",
-  metric: false,
-  strings: {
-    title: "My location",
-    popup: "You are within {distance} {unit} from this point",
-    outsideMapBoundsMsg: "You seem located outside the boundaries of the map"
-  },
-  locateOptions: {
-    maxZoom: 18,
-    watch: true,
-    enableHighAccuracy: true,
-    maximumAge: 10000,
-    timeout: 10000
-  }
-}).addTo(map);
 
 /* Larger screens get expanded layer control and visible sidebar */
 if (document.body.clientWidth <= 767) {
