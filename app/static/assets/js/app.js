@@ -104,49 +104,62 @@ var markerClusters = new L.MarkerClusterGroup({
   spiderfyOnMaxZoom: true,
   showCoverageOnHover: true,
   zoomToBoundsOnClick: true,
-  disableClusteringAtZoom: 12
+  disableClusteringAtZoom: 8,
+  maxClusterRadius: 60
 });
 
+
+function drawPlots(msg){
+}
+
+var years = [2011, 2012, 2013, /*2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021*/]
+const chart_div = document.getElementById('chart-div')
 function plot(coords) {
   $.ajax({
       type: "GET",
       url: "/plot?coords="+coords,
       dataType: "json",
       success: function(msg) {
-        var ctxL = document.getElementById("lineChart").getContext('2d');
-        var myLineChart = new Chart(ctxL, {
-          type: 'line',
-          data: {
-            labels: Array.from(new Array(msg.data.length),(val,index)=> index),
-            datasets: [{
-              label: "Data",
-              data: msg.data,
-              backgroundColor: [
-                'rgba(105, 0, 132, .2)',
-              ],
-              borderColor: [
-                'rgba(200, 99, 132, .7)',
-              ],
-              borderWidth: 1,
-              pointRadius: 0
-            }/*,
-            {
-              label: "My Second dataset",
-              data: [28, 48, 40, 19, 86, 27, 90],
-              backgroundColor: [
-                'rgba(0, 137, 132, .2)',
-              ],
-              borderColor: [
-                'rgba(0, 10, 130, .7)',
-              ],
-              borderWidth: 2
-            }*/
-            ]
-          },
-          options: {
-            responsive: true
-          }
-        });
+        for(var year in msg.data){ 
+          var canvas = document.createElement("canvas");
+          canvas.id = "lineChart-"+year;
+          canvas.classList = "chart";
+          chart_div.appendChild(canvas);
+          var ctxL = canvas.getContext('2d');
+          new Chart(ctxL, {
+            type: 'line',
+            data: {
+              labels: Array.from(new Array(msg.data[year].length),(val,index)=> index),
+              datasets: [{
+                label: year,
+                data: msg.data[year],
+                backgroundColor: [
+                  'rgba(105, 0, 132, .2)',
+                ],
+                borderColor: [
+                  'rgba(200, 99, 132, .7)',
+                ],
+                borderWidth: 1,
+                pointRadius: 0
+              }/*,
+              {
+                label: "My Second dataset",
+                data: [28, 48, 40, 19, 86, 27, 90],
+                backgroundColor: [
+                  'rgba(0, 137, 132, .2)',
+                ],
+                borderColor: [
+                  'rgba(0, 10, 130, .7)',
+                ],
+                borderWidth: 2
+              }*/
+              ]
+            },
+            options: {
+              responsive: false
+            }
+          });
+        }
       },
       error: function (xhr, status, error) {
           console.log(error);
@@ -154,19 +167,31 @@ function plot(coords) {
   });
 }
 
+
+var riverColors = {'Fiume Po': "#ff3135", 'Po': "#ff3135",
+                   'Adige - Etsch': "#009b2e", 'Fiume Adige': '#009b2e', 'Adige': '#009b2e',
+                   'Tevere': '#ce06cb', 'Fiume Tevere': '#ce06cb',
+                   'Adda': '#fd9a00', 'Fiume Adda':'#fd9a00',
+                   'Oglio': '#ffff00', 'Fiume Oglio': '#ffff00',
+                   'Tanaro': '#9ace00', 'Fiume Tanaro': '#9ace00',
+                   'Ticino': '#6e6e6e', 'Fiume Ticino': '#6e6e6e',
+                   'Arno': '#976900',
+                   'Piave': '#969696',
+                   'Fiume Reno': '#0099ff'}
+
+
 var measuresLayer = L.geoJson(null);
 var measures = L.geoJson(null, {
+  
   pointToLayer: function (feature, latlng) {
     //console.log(invertedLatLng, feature)
-    return L.marker(latlng, {
-      icon: L.icon({
-        iconUrl: "static/assets/img/dot.png",
-        iconSize: [8, 8],
-        iconAnchor: [12, 28],
-        popupAnchor: [0, -25]
-      }),
+    return L.circleMarker(latlng, {
+      radius: 4,
+      color: riverColors[feature.name],
+      weight: 3,
+      opacity: 0.8,
+      fill: true,
       title: feature.id,
-      riseOnHover: true
     });
   },
   onEachFeature: function (feature, layer) {
@@ -187,7 +212,7 @@ var measures = L.geoJson(null, {
   }
 });
 
-$.getJSON("static/data/points.geojson", function (data) {
+$.getJSON("static/data/points_new.geojson", function (data) {
   measures.addData(data);
   map.addLayer(measuresLayer);
 });
@@ -267,8 +292,8 @@ var baseLayers = {
 };
 
 var groupedOverlays = {
-  "Points of Interest": {
-    "<img src='static/assets/img/dot.png' width='24' height='28'>&nbsp;Measures": measuresLayer
+  "points of Interest": {
+    "Measures": measuresLayer
   }
 };
 
@@ -277,16 +302,6 @@ var layerControl = L.control.groupedLayers(baseLayers, groupedOverlays, {
 }).addTo(map);
 
 /* Highlight search box text on click */
-$("#searchbox").click(function () {
-  $(this).select();
-});
-
-/* Prevent hitting enter from refreshing the page */
-$("#searchbox").keypress(function (e) {
-  if (e.which == 13) {
-    e.preventDefault();
-  }
-});
 
 $("#featureModal").on("hidden.bs.modal", function (e) {
   $(document).on("mouseout", ".feature-row", clearHighlight);
@@ -305,4 +320,34 @@ if (!L.Browser.touch) {
   .disableScrollPropagation(container);
 } else {
   L.DomEvent.disableClickPropagation(container);
+}
+
+
+const sidebar = document.getElementById('sidebar')
+const resizer = document.getElementById('resize-left')
+
+map.addEventListener('mouseup', (e) => {
+  document.removeEventListener('mousemove', resize);
+})
+
+resizer.addEventListener('mousedown', function(e) {
+  document.addEventListener('mousemove', resize);
+})
+
+window.addEventListener('mouseup',  (e)=>{
+  document.removeEventListener('mousemove', resize);
+})
+document.addEventListener('mouseup',  (e)=>{
+  document.removeEventListener('mousemove', resize);
+})
+resizer.addEventListener('mouseup',  (e)=>{
+  document.removeEventListener('mousemove', resize);
+})
+
+
+function resize(e) {
+  diff = sidebar.getBoundingClientRect().right - e.pageX
+  if(diff < 300)
+    diff = 300;
+  sidebar.style.width = diff + 'px';
 }
