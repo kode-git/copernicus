@@ -1,7 +1,6 @@
 html, body, #container {
   height: 100%;
   width: 100%;
-  overflow: hidden;
 }
 body {
   padding-top: 50px;
@@ -11,14 +10,15 @@ input[type="radio"], input[type="checkbox"] {
 }
 #sidebar {
   display: block;
-  width: 400px;
+  width: 470px;
   height: 100%;
   max-width: 100%;
   float: right;
 }
 #map {
-  width: auto;
+  width:auto;
   height: 100%;
+  padding-right: 1px;
   box-shadow: 0 0 10px rgba(0,0,0,0.5);
 }
 #loading {
@@ -70,6 +70,7 @@ input[type="radio"], input[type="checkbox"] {
   top: 210px;
   bottom: 0px;
   overflow: auto;
+  padding-left: 10px;
 }
 .leaflet-control-layers {
   overflow: auto;
@@ -177,6 +178,22 @@ input[type="radio"], input[type="checkbox"] {
   }
 }
 
-#lineChart{
-  margin-top: 100%;
+#line-div{
+  margin-top: 2vh;
+  width: 23vw;
+}
+
+
+.resize-left{
+  margin-left: -5px;
+  cursor: ew-resize;
+  z-index: 10;
+  margin-top: 2vh;
+  width: 30px;
+}
+
+.chart{
+  width: 100%;
+  max-width: 28vw;
+  margin-top: 2vh;
 }
