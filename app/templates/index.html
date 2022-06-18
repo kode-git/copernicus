@@ -53,30 +53,43 @@
               <h3 class="panel-title">Panel title
             </div>
             <div class="panel-body">
-              <div class="row">
-                <div class="col-xs-8 col-md-8">
-                  <form action="">
+              <div>
+                <div class="form-container">
                     <label for="days">N° of days of prediction:</label><br>
-                    <input type="number" id="days" name="days" value="1"><br>
-                    <label for="temp">Average temperature:</label><br>
-                    <input type="number" id="temp" name="temp" value="35"><br><br>
-                    <input type="submit" value="Submit">
-                  </form>   
+                    <input type="range" min="2" max="365" value="0" id="days" name="days">
+                    <div id="days-value">0</div>
+                    <button class = '' id = 'pred'>Predict</button>
+                </div>
+                <div class="sidebar-table" id="sidebar-table">
+                  <table class="table table-hover" id="feature-list">
+                      <tbody class="list"></tbody>
+                  </table> 
                 </div>
               </div>
             </div>
-            <div class="sidebar-table" id="sidebar-table">
-              <div class='resize-left' id="resize-left" ><i class='bx bxs-left-arrow bx-flip-vertical '  ></i><i class='bx bxs-right-arrow bx-flip-vertical right-arrow' ></i></div>
-              <table class="table table-hover" id="feature-list">
-                 <tbody class="list"></tbody>
-              </table> 
-              <div id="chart-div">
+            <div id="chart-div-pred">
                 
-                
-              </div>
-
             </div>
-
+            <div class='resize-left' id="resize-left" ><i class='bx bxs-left-arrow bx-flip-vertical '  ></i><i class='bx bxs-right-arrow bx-flip-vertical right-arrow' ></i></div>
+            <div id="div-year">
+              <label for="year" style="margin-top: 10px;">Year:</label>
+              <select name="year" id="year">
+                <option value="2011">2011</option>
+                <option value="2012">2012</option>
+                <option value="2013">2013</option>
+                <option value="2014">2014</option>
+                <option value="2015">2015</option>
+                <option value="2016">2016</option>
+                <option value="2017">2017</option>
+                <option value="2018">2018</option>
+                <option value="2019">2019</option>
+                <option value="2020">2020</option>
+                <option value="2021" selected="selected">2021</option>
+              </select>
+            </div>
+            <div id="chart-div">
+                
+            </div>
           </div>
         </div>
       </div>
@@ -228,7 +241,6 @@
     <script src="https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-locatecontrol/v0.43.0/L.Control.Locate.min.js"></script>
     <script src="{{ url_for('static',filename='assets/leaflet-groupedlayercontrol/leaflet.groupedlayercontrol.js') }}"></script>
     <script src="{{ url_for('static',filename='assets/js/app.js') }}"></script>
-    <script src="{{ url_for('static',filename='assets/js/plot.js') }}"></script>
 
   </body>
 </html>

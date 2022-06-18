@@ -129,6 +129,7 @@ dmypy.json
 .pyre/
 *.csv
 */*.json
+/app/static/model
 
 ### macOS ###
 # General
