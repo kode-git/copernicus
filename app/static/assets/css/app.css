@@ -9,6 +9,9 @@ input[type="radio"], input[type="checkbox"] {
   margin: 0;
 }
 #sidebar {
+  overflow:scroll;
+  overflow-x:hidden;
+  overflow-y:scroll;
   display: block;
   width: 470px;
   height: 100%;
@@ -52,8 +55,9 @@ input[type="radio"], input[type="checkbox"] {
 /*.panel-heading{
    width: 250px;
 }*/
-.pan1el-body{
-  width: 250px;
+.panel-body{
+  padding-bottom: 0px;
+  width: 100%;
 }
 .feature-row {
   cursor: pointer;
@@ -65,13 +69,19 @@ input[type="radio"], input[type="checkbox"] {
   position: relative;
 }
 .sidebar-table {
+  width: 200px;
+  overflow: auto;
+}
+
+.pred{
   position: absolute;
   width: 100%;
   top: 210px;
   bottom: 0px;
   overflow: auto;
-  padding-left: 10px;
+  margin-top: 330px;
 }
+
 .leaflet-control-layers {
   overflow: auto;
 }
@@ -84,7 +94,6 @@ input[type="radio"], input[type="checkbox"] {
 }
 .table {
   margin-bottom: 0px;
-  margin-top: 50px;
 }
 .navbar .navbar-brand {
   font-weight: bold;
@@ -185,15 +194,49 @@ input[type="radio"], input[type="checkbox"] {
 
 
 .resize-left{
-  margin-left: -5px;
+  margin-left: 3px;
   cursor: ew-resize;
   z-index: 10;
-  margin-top: 2vh;
   width: 30px;
+  margin-top: 10px;
+}
+
+#chart-div{
+  margin-top: -15px;
+  display: table;
+  clear: both;
 }
 
 .chart{
   width: 100%;
-  max-width: 28vw;
+  max-width: 32vw;
+  min-width: 450px;
   margin-top: 2vh;
+}
+
+.divLineChart {
+  float: left;
+}
+
+#pred{
+  float: right;
+  margin-top: 10px;
+  margin-right: -20px;
+}
+
+.form-container{
+  width: 200px;
+  float: left;
+  padding-right: 37px;
+}
+
+#days-value{
+  float: right;
+  position: absolute;
+  margin-left: 167px;
+  margin-top: -18px;
+}
+
+#div-year{
+  padding-left: 15px;
 }
