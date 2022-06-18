@@ -130,3 +130,9 @@ dmypy.json
 *.csv
 */*.json
 /app/static/model
+
+### macOS ###
+# General
+.DS_Store
+.AppleDouble
+.LSOverride
