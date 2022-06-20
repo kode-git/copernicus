@@ -187,7 +187,6 @@ L.Control.GroupedLayers = L.Control.extend({
 
   // IE7 bugs out if you create a radio dynamically, so you have to do it this hacky way (see http://bit.ly/PqYLBe)
   _createRadioElement: function (name, checked) {
-    console.log(name, checked);
     var radioHtml = '<input type="radio" class="leaflet-control-layers-selector" name="' + name + '"';
     if (checked) {
       radioHtml += ' checked="checked"';
@@ -212,7 +211,6 @@ L.Control.GroupedLayers = L.Control.extend({
       input.className = 'leaflet-control-layers-selector';
       input.defaultChecked = checked;
     } else {
-      console.log(obj);
       input = this._createRadioElement('leaflet-base-layers', checked);
     }
 

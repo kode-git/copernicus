@@ -210,7 +210,7 @@ input[type="radio"], input[type="checkbox"] {
 .chart{
   width: 100%;
   max-width: 32vw;
-  min-width: 450px;
+  min-width: 430px;
   margin-top: 2vh;
 }
 
@@ -221,7 +221,6 @@ input[type="radio"], input[type="checkbox"] {
 #pred{
   float: right;
   margin-top: 10px;
-  margin-right: -20px;
 }
 
 .form-container{
@@ -238,5 +237,46 @@ input[type="radio"], input[type="checkbox"] {
 }
 
 #div-year{
+  float:left;
   padding-left: 15px;
+}
+
+/*Loading circe*/
+@keyframes spinner {
+  0% {
+    transform: translate3d(-50%, -50%, 0) rotate(0deg);
+  }
+  100% {
+    transform: translate3d(-50%, -50%, 0) rotate(360deg);
+  }
+}
+.spin::before {
+  animation: 1.5s linear infinite spinner;
+  animation-play-state: inherit;
+  border: solid 5px #cfd0d1;
+  border-bottom-color: #1c87c9;
+  border-radius: 50%;
+  content: "";
+  height: 100px;
+  width: 100px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate3d(-50%, -50%, 0);
+  will-change: transform;
+}
+
+.label-box{
+  font-weight: 100;
+}
+
+#compare{
+  margin-left: 10px;
+  padding-top: 10px;
+}
+
+.checkboxes{
+  margin-left: 10px;
+  float:left;
+  margin-top: 10px;
 }
