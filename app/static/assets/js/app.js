@@ -1,13 +1,14 @@
+
 var map, featureList, boroughSearch = [], theaterSearch = [], museumSearch = [];
 
 $(window).resize(function() {
   sizeLayerControl();
 });
 
-$(document).on("click", ".feature-row", function(e) {
+/*$(document).on("click", ".feature-row", function(e) {
   $(document).off("mouseout", ".feature-row", clearHighlight);
   sidebarClick(parseInt($(this).attr("id"), 10));
-});
+});*/
 
 if ( !("ontouchstart" in window) ) {
   $(document).on("mouseover", ".feature-row", function(e) {
@@ -124,16 +125,16 @@ function hex2rgb(colour, alpha) {
   return 'rgba(' + r + ',' + g + ',' + b + ','+ alpha + ')';
 }
 
-var riverColors = {'Fiume Po': "#ff3135", 'Po': "#ff3135",
-                   'Adige - Etsch': "#009b2e", 'Fiume Adige': '#009b2e', 'Adige': '#009b2e',
-                   'Tevere': '#ce06cb', 'Fiume Tevere': '#ce06cb',
-                   'Adda': '#fd9a00', 'Fiume Adda':'#fd9a00',
-                   'Oglio': '#ffff00', 'Fiume Oglio': '#ffff00',
-                   'Tanaro': '#9ace00', 'Fiume Tanaro': '#9ace00',
-                   'Ticino': '#6e6e6e', 'Fiume Ticino': '#6e6e6e',
-                   'Arno': '#976900',
-                   'Piave': '#969696',
-                   'Fiume Reno': '#0099ff'}
+var riverColors = {'Fiume Po': "#c04c98", 'Po': "#c04c98",
+                   'Adige - Etsch': "#a976c1", 'Fiume Adige': '#a976c1', 'Adige': '#a976c1',
+                   'Tevere': '#bd8db4', 'Fiume Tevere': '#bd8db4',
+                   'Adda': '#d4a39e', 'Fiume Adda':'#d4a39e',
+                   'Oglio': '#eab982', 'Fiume Oglio': '#eab982',
+                   'Tanaro': '#ffcab9', 'Fiume Tanaro': '#ffcab9',
+                   'Ticino': '#fd9291', 'Fiume Ticino': '#fd9291',
+                   'Arno': '#e75d6f',
+                   'Piave': '#c52a52',
+                   'Fiume Reno': '#93003a'}
 
 const nameMatch ={'Fiume Po': 'Po', 'Po': 'Po',
                   'Adige - Etsch': 'Adige', 'Fiume Adige': 'Adige', 'Adige': 'Adige',
@@ -150,54 +151,39 @@ const nameMatch ={'Fiume Po': 'Po', 'Po': 'Po',
 const values = ['dis', 'temp', 'prec'];
 const chart_div = document.getElementById('chart-div')
 var selected_coords = null;
+var selected_name = null;
+
+const min_year = 2011 //default year
+const max_year = 2021
+
+var plot_dict = {}
+plot_dict['dis'] = {}
+plot_dict['temp'] = {}
+plot_dict['prec'] = {}
+
+var truth = {}
 
 function plot(coords, name) {
-  var year = 2011 //default year
-  var year = $('#year').val()
+  //Show loading thing
+  $("#loading").show();
+  //get checkboxes
+  truth['dis'] = $('#comp-dis').prop('checked');
+  truth['temp'] = $('#comp-temp').prop('checked');
+  truth['prec'] = $('#comp-prec').prop('checked');
+  if(!truth['dis'] && !truth['temp'] && !truth['prec'])
+    return;
   $('#chart-div').empty();
   $.ajax({
       type: "GET",
-      url: "/plot?coords="+coords+'&year='+year,
+      url: "/plot?coords="+coords,
       dataType: "json",
       success: function(msg) {
-        for(var i = 0; i < values.length; i++){ 
-          var canvas = document.createElement("canvas");
-          var div = document.createElement("div");
-          div.classList = 'divLineChart';
-          canvas.id = 'lineChart-'+year+'-'+i;
-          canvas.classList = "chart";
-          div.appendChild(canvas);
-          chart_div.appendChild(div);
-          var ctxL = canvas.getContext('2d');
-          new Chart(ctxL, {
-            type: 'line',
-            data: {
-              labels: msg.data[year]['time'],
-              datasets: [{
-                label: values[i] + ' ' + year,
-                data: msg.data[year][values[i]],
-                backgroundColor: [
-                  hex2rgb(riverColors[name], 0.5),
-                ],
-                borderColor: [
-                  riverColors[name],
-                ],
-                borderWidth: 1,
-                pointRadius: 0
-              }]
-            },
-            options: {
-              responsive: true,
-              scales: {
-                xAxes: [{
-                  ticks: {
-                    maxTicksLimit: 4
-                  }
-                }]
-              }
-            }
-          });
-        }
+        var years = Object.keys(msg);
+        for(var val of values)
+          for(var i = years.length-1; i>=0; i--)
+            plotVal(name, years[i], val, msg[years[i]].data)
+        
+        $("#loading").hide();
       },
       error: function (xhr, status, error) {
           console.log(error);
@@ -205,9 +191,67 @@ function plot(coords, name) {
   });
 }
 
+
+
+function plotVal(name, year, val, data){
+  if(!data) return;
+  var canvas = document.createElement("canvas");
+  var div = document.createElement("div");
+  div.classList = 'divLineChart';
+  canvas.id = 'lineChart-'+year+'-'+val;
+  plot_dict[val][year] = canvas.id;
+  canvas.classList = "chart";
+  div.appendChild(canvas);
+  chart_div.appendChild(div);
+  var ctxL = canvas.getContext('2d');
+  if(!truth[val])
+    $('#'+plot_dict[val][year]).hide();
+  new Chart(ctxL, {
+    type: 'line',
+    data: {
+      labels: data['months'],
+      datasets: [{
+        label: val + ' ' + year,
+        data: data[val]['values'],
+        backgroundColor: [
+          hex2rgb(riverColors[name], 0.5),
+        ],
+        borderColor: [
+          riverColors[name],
+        ],
+        borderWidth: 1,
+        pointRadius: 0
+      },{
+        label: "Average",
+        data: Array.from(new Array(data['months'].length), (v,index) => data[val]['avg'] ),
+        backgroundColor: [
+          'rgba(255, 255, 255, 0)',
+        ],
+        borderColor: [
+          'rgba(0, 0, 0, 1)',
+        ],
+        borderWidth: 1,
+        pointRadius: 0
+      }
+    ]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        xAxes: [{
+          ticks: {
+            maxTicksLimit: 4
+          }
+        }]
+      }
+    }
+  });
+}
+
+
+
 var measuresLayer = L.geoJson(null);
-var measures = L.geoJson(null, {
-  
+var measures = L.geoJson(null, {  
   pointToLayer: function (feature, latlng) {
     //console.log(invertedLatLng, feature)
     return L.circleMarker(latlng, {
@@ -226,8 +270,11 @@ var measures = L.geoJson(null, {
       layer.on({
         click: function (e) {
           selected_coords = feature.geometry.coordinates;
+          selected_name = feature.name; 
+
+          //selected_coords = feature.geometry.ref; 
           syncSidebar(content);
-          plot(feature.geometry.coordinates, feature.name);
+          plot(selected_coords, selected_name);
         }
       });
       
@@ -235,14 +282,12 @@ var measures = L.geoJson(null, {
   }
 });
 
-$.getJSON("static/data/points_new.geojson", function (data) {
+$.getJSON("static/data/points_new_fill.geojson", function (data) {
   measures.addData(data);
   map.addLayer(measuresLayer);
 });
 
 map = L.map("map", {
-  //zoom: 10,
-  //center: [40.702222, -73.979378],
   zoom: 8,
   center: [45.394869, 10.352758],
   layers: [cartoLight, markerClusters],//, boroughs, markerClusters, highlight],
@@ -357,9 +402,11 @@ resizer.addEventListener('mousedown', function(e) {
 window.addEventListener('mouseup',  (e)=>{
   document.removeEventListener('mousemove', resize);
 })
+
 document.addEventListener('mouseup',  (e)=>{
   document.removeEventListener('mousemove', resize);
 })
+
 resizer.addEventListener('mouseup',  (e)=>{
   document.removeEventListener('mousemove', resize);
 })
@@ -397,6 +444,7 @@ $('#pred').click( () => {
   var days = $('#days').val();
   if(!days || days === '-' || days === 0)
     return;
+  $('#loading').show();
   $.post('/predict/'+days, (msg) => {
     var canvas = document.createElement("canvas");
     var div = document.createElement("div");
@@ -434,5 +482,77 @@ $('#pred').click( () => {
         }
       }
     });
+    $("#loading").hide();
   })
 })
+
+/*CHECKBOXES*/
+
+$('#comp-dis').click(() => visibilityPlot($('#comp-dis').prop('checked'), 'dis'));
+$('#comp-temp').click(() => visibilityPlot($('#comp-temp').prop('checked'), 'temp'));
+$('#comp-prec').click(() => visibilityPlot($('#comp-prec').prop('checked'), 'prec'));
+
+function visibilityPlot(t, val){
+  var years = $('#years').val().split(' - ');
+  truth[val] = t;
+  if(t)
+    for(var year = parseInt(years[0]); year <= parseInt(years[1]); year++)
+      $('#'+plot_dict[val][year]).show();
+  else
+    for(year in plot_dict[val])
+      $('#'+plot_dict[val][year]).hide();
+  window.dispatchEvent(new Event('resize'));
+}
+
+/*RANGES*/
+
+$( function() {
+  $( "#slider-range" ).slider({
+    range: true,
+    min: min_year,
+    max: max_year,
+    values: [ min_year, max_year ],
+    slide: function( event, ui ) {
+      $("#years").val(ui.values[ 0 ] + " - " + ui.values[ 1 ]);
+    }
+  });
+  $("#years").val($( "#slider-range" ).slider( "values", 0 ) +
+    " - " + $( "#slider-range" ).slider( "values", 1 ) );
+} );
+
+
+$(function() {
+  $("#slider-range-min").slider({
+    range: "min",
+    value: 80,
+    min: 2,
+    max: 730,
+    slide: function( event, ui ) {
+      $( "#days" ).val(ui.value );
+    }
+  });
+  $( "#days" ).val($( "#slider-range-min" ).slider( "value" ) );
+});
+
+
+function slider(){
+  var years = $('#years').val().split(' - ')
+  for(var year = min_year; year < parseInt(years[0]); year++)
+    for(var val of values)
+        $('#'+plot_dict[val][year]).hide();
+
+  for(var year = max_year; year > parseInt(years[1]); year--)
+    for(var val of values)
+        $('#'+plot_dict[val][year]).hide();
+
+  for(var year = parseInt(years[0]); year <= parseInt(years[1]); year++)
+    for(var val of values)
+      if(truth[val])
+        $('#'+plot_dict[val][year]).show();
+  window.dispatchEvent(new Event('resize'));
+  document.removeEventListener('mouseup', slider)
+}
+
+$('#slider-range').on('mousedown', function() {
+  document.addEventListener('mouseup', slider)
+});
