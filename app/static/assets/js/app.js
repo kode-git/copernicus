@@ -179,10 +179,17 @@ function plot(coords, name) {
       dataType: "json",
       success: function(msg) {
         var years = $('#years').val().split(' - ')
+        
         for(var val of values)
-          for(var year = parseInt(years[1]); year >= parseInt(years[0]); year--)
+          for(var year = max_year; year >= min_year; year--)
             plotVal(name, year, val, msg[year].data)
         
+        for(var year = min_year; year < parseInt(years[0]); year++)
+          for(var val of values)
+            $('#'+plot_dict[val][year]).hide();
+        for(var year = max_year; year > parseInt(years[1]); year--)
+          for(var val of values)
+            $('#'+plot_dict[val][year]).hide();
         $("#loading").hide();
       },
       error: function (xhr, status, error) {
@@ -190,7 +197,6 @@ function plot(coords, name) {
       }
   });
 }
-
 
 
 function plotVal(name, year, val, data){
@@ -433,18 +439,45 @@ $('#days').mouseup( () => {
   $('#days').off('mousemove');
 })
 
-$('#pred').click( () => {
-  if(!selected_coords){
-    Swal.fire({
-      icon: 'info',
-      text: 'Select a point',
-    })
-    return;
-  }
+const online_pred = (months) => {
   $('#chart-div-pred').empty();
-  var months = $('#days').val();
-  if(!months || months === '-' || months === 0)
-    return;
+
+  $('#loading').show();
+  $.post('/predict_live/'+months+'/'+selected_coords, (msg) => {
+    var canvas = document.createElement("canvas");
+    var div = document.createElement("div");
+    div.classList = 'divLineChart';
+    canvas.id = 'lineChartPred';
+    canvas.classList = "chart";
+    div.appendChild(canvas);
+    pred_div.appendChild(div);
+    var ctxL = canvas.getContext('2d');
+    new Chart(ctxL, {
+      type: 'line',
+      data: {
+        labels: msg.data['months'],
+        datasets: [{
+          label: 'predicted discharge',
+          data: msg.data['pred'],
+          backgroundColor: [
+            hex2rgb('#ffcc80', 0.5),
+          ],
+          borderColor: [
+            '#ff9900',
+          ],
+          borderWidth: 1,
+          pointRadius: 0
+        }]
+      },
+      options: {
+        responsive: true
+      }
+    });
+    $("#loading").hide();
+  })
+}
+
+const offline_pred = (months) => {
   $('#loading').show();
   $.post('/predict/'+months+'/'+selected_coords, (msg) => {
     var canvas = document.createElement("canvas");
@@ -486,9 +519,9 @@ $('#pred').click( () => {
     });
     $("#loading").hide();
   })
-})
+}
 
-$('#pred_live').click( async () => {
+$('#pred').click( async () => {
   if(!selected_coords){
     Swal.fire({
       icon: 'info',
@@ -496,50 +529,25 @@ $('#pred_live').click( async () => {
     })
     return;
   }
-  var cont = false
-  var msg = await Swal.fire({
-    template: '#my-template'
-  })
-  if(msg.isDenied)
-    return;
-  $('#chart-div-pred').empty();
   var months = $('#days').val();
   if(!months || months === '-' || months === 0)
     return;
-  $('#loading').show();
-  $.post('/predict_live/'+months+'/'+selected_coords, (msg) => {
-    var canvas = document.createElement("canvas");
-    var div = document.createElement("div");
-    div.classList = 'divLineChart';
-    canvas.id = 'lineChartPred';
-    canvas.classList = "chart";
-    div.appendChild(canvas);
-    pred_div.appendChild(div);
-    var ctxL = canvas.getContext('2d');
-    new Chart(ctxL, {
-      type: 'line',
-      data: {
-        labels: msg.data['months'],
-        datasets: [{
-          label: 'predicted discharge',
-          data: msg.data['pred'],
-          backgroundColor: [
-            hex2rgb('#ffcc80', 0.5),
-          ],
-          borderColor: [
-            '#ff9900',
-          ],
-          borderWidth: 1,
-          pointRadius: 0
-        }]
-      },
-      options: {
-        responsive: true
-      }
-    });
-    $("#loading").hide();
-  })
+  
+  var opt = $('#pred_opt').val()
+  if(opt === '0')
+    offline_pred(months);
+  if(opt === '1'){
+      var msg = await Swal.fire({
+        template: '#my-template'
+      })
+      if(msg.isDenied)
+        return;
+      else
+        online_pred(months);
+    }
 })
+
+
 
 
 /*CHECKBOXES*/

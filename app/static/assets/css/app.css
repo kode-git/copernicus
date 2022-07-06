@@ -223,9 +223,9 @@ input[type="radio"], input[type="checkbox"] {
   margin-top: 10px;
 }
 
-#pred_live{
+#pred_opt{
   float: right;
-  margin-top: 10px;
+  margin-top: 15px;
   margin-right: 10px;
 }
 
