@@ -78,7 +78,7 @@ def append_row_dis(X, last_time, predicted_val_tmp, predicted_val_dis):
     X_new.append(row)
     return np.array([X_new]), next_month
 
-df_pred_grouped = pd.read_pickle('E:/francesco/UNI/HDS/models/grouped_pred.pkl')
+df_pred_grouped = pd.read_pickle('../../monthly/grouped_pred.pkl')
 df_pred_grouped = df_pred_grouped.set_index(['coords', 'time'])
 
 df_grouped = pd.read_pickle('../../monthly/grouped_all.pkl')
