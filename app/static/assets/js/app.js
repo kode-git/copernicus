@@ -456,7 +456,6 @@ $('#pred').click( () => {
     div.appendChild(canvas);
     pred_div.appendChild(div);
     var ctxL = canvas.getContext('2d');
-    console.log(msg.data)
     new Chart(ctxL, {
       type: 'line',
       data: {
@@ -489,7 +488,7 @@ $('#pred').click( () => {
   })
 })
 
-$('#pred_live').click( () => {
+$('#pred_live').click( async () => {
   if(!selected_coords){
     Swal.fire({
       icon: 'info',
@@ -497,10 +496,12 @@ $('#pred_live').click( () => {
     })
     return;
   }
-  Swal.fire({
-    icon: 'info',
-    text: 'This operation may take time',
+  var cont = false
+  var msg = await Swal.fire({
+    template: '#my-template'
   })
+  if(msg.isDenied)
+    return;
   $('#chart-div-pred').empty();
   var months = $('#days').val();
   if(!months || months === '-' || months === 0)
