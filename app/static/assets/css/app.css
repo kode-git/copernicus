@@ -223,6 +223,12 @@ input[type="radio"], input[type="checkbox"] {
   margin-top: 10px;
 }
 
+#pred_live{
+  float: right;
+  margin-top: 10px;
+  margin-right: 10px;
+}
+
 .form-container{
   width: 200px;
   float: left;

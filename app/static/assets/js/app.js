@@ -81,8 +81,8 @@ function clearHighlight() {
 
 function syncSidebar(val) {
   /* Empty sidebar features */
+  $("#lineChartPredDiv").empty();
   $("#feature-list tbody").empty();
-
   $("#feature-list tbody").append(val)
 }
 
@@ -154,7 +154,7 @@ var selected_coords = null;
 var selected_name = null;
 
 const min_year = 2011 //default year
-const max_year = 2021
+const max_year = 2022
 
 var plot_dict = {}
 plot_dict['dis'] = {}
@@ -178,10 +178,10 @@ function plot(coords, name) {
       url: "/plot?coords="+coords,
       dataType: "json",
       success: function(msg) {
-        var years = Object.keys(msg);
+        var years = $('#years').val().split(' - ')
         for(var val of values)
-          for(var i = years.length-1; i>=0; i--)
-            plotVal(name, years[i], val, msg[years[i]].data)
+          for(var year = parseInt(years[1]); year >= parseInt(years[0]); year--)
+            plotVal(name, year, val, msg[year].data)
         
         $("#loading").hide();
       },
@@ -223,7 +223,7 @@ function plotVal(name, year, val, data){
         pointRadius: 0
       },{
         label: "Average",
-        data: Array.from(new Array(data['months'].length), (v,index) => data[val]['avg'] ),
+        data: data[val]['avg'],
         backgroundColor: [
           'rgba(255, 255, 255, 0)',
         ],
@@ -329,7 +329,7 @@ function updateAttribution(e) {
 map.on("layeradd", updateAttribution);
 map.on("layerremove", updateAttribution);
 
-var attributionControl = L.control({
+/*var attributionControl = L.control({
   position: "bottomright"
 });
 attributionControl.onAdd = function (map) {
@@ -337,7 +337,7 @@ attributionControl.onAdd = function (map) {
   div.innerHTML = "<span class='hidden-xs'>Developed by <a href='http://bryanmcbride.com'>bryanmcbride.com</a> | </span><a href='#' onclick='$(\"#attributionModal\").modal(\"show\"); return false;'>Attribution</a>";
   return div;
 };
-map.addControl(attributionControl);
+map.addControl(attributionControl);*/
 
 var zoomControl = L.control.zoom({
   position: "bottomright"
@@ -346,11 +346,6 @@ var zoomControl = L.control.zoom({
 /* GPS enabled geolocation control set to follow the user's location */
 
 /* Larger screens get expanded layer control and visible sidebar */
-if (document.body.clientWidth <= 767) {
-  var isCollapsed = true;
-} else {
-  var isCollapsed = false;
-}
 
 var baseLayers = {
   "Street Map": cartoLight,
@@ -363,7 +358,8 @@ var groupedOverlays = {
 };
 
 var layerControl = L.control.groupedLayers(baseLayers, groupedOverlays, {
-  collapsed: isCollapsed
+  collapsed: true,
+  
 }).addTo(map);
 
 /* Highlight search box text on click */
@@ -378,14 +374,14 @@ $(document).one("ajaxStop", function () {
 });
 
 // Leaflet patch to make layer control scrollable on touch browsers
-var container = $(".leaflet-control-layers")[0];
+/*var container = $(".leaflet-control-layers")[0];
 if (!L.Browser.touch) {
   L.DomEvent
   .disableClickPropagation(container)
   .disableScrollPropagation(container);
 } else {
   L.DomEvent.disableClickPropagation(container);
-}
+}*/
 
 
 const sidebar = document.getElementById('sidebar')
@@ -438,28 +434,35 @@ $('#days').mouseup( () => {
 })
 
 $('#pred').click( () => {
-  if(!selected_coords)
+  if(!selected_coords){
+    Swal.fire({
+      icon: 'info',
+      text: 'Select a point',
+    })
     return;
+  }
   $('#chart-div-pred').empty();
-  var days = $('#days').val();
-  if(!days || days === '-' || days === 0)
+  var months = $('#days').val();
+  if(!months || months === '-' || months === 0)
     return;
   $('#loading').show();
-  $.post('/predict/'+days, (msg) => {
+  $.post('/predict/'+months+'/'+selected_coords, (msg) => {
     var canvas = document.createElement("canvas");
     var div = document.createElement("div");
     div.classList = 'divLineChart';
+    div.id = 'lineChartPredDiv'
     canvas.id = 'lineChartPred';
     canvas.classList = "chart";
     div.appendChild(canvas);
     pred_div.appendChild(div);
     var ctxL = canvas.getContext('2d');
+    console.log(msg.data)
     new Chart(ctxL, {
       type: 'line',
       data: {
-        labels: msg.data['days'],
+        labels: msg.data['months'],
         datasets: [{
-          label: 'prediction',
+          label: 'predicted discharge',
           data: msg.data['pred'],
           backgroundColor: [
             hex2rgb('#ffcc80', 0.5),
@@ -486,6 +489,58 @@ $('#pred').click( () => {
   })
 })
 
+$('#pred_live').click( () => {
+  if(!selected_coords){
+    Swal.fire({
+      icon: 'info',
+      text: 'Select a point',
+    })
+    return;
+  }
+  Swal.fire({
+    icon: 'info',
+    text: 'This operation may take time',
+  })
+  $('#chart-div-pred').empty();
+  var months = $('#days').val();
+  if(!months || months === '-' || months === 0)
+    return;
+  $('#loading').show();
+  $.post('/predict_live/'+months+'/'+selected_coords, (msg) => {
+    var canvas = document.createElement("canvas");
+    var div = document.createElement("div");
+    div.classList = 'divLineChart';
+    canvas.id = 'lineChartPred';
+    canvas.classList = "chart";
+    div.appendChild(canvas);
+    pred_div.appendChild(div);
+    var ctxL = canvas.getContext('2d');
+    new Chart(ctxL, {
+      type: 'line',
+      data: {
+        labels: msg.data['months'],
+        datasets: [{
+          label: 'predicted discharge',
+          data: msg.data['pred'],
+          backgroundColor: [
+            hex2rgb('#ffcc80', 0.5),
+          ],
+          borderColor: [
+            '#ff9900',
+          ],
+          borderWidth: 1,
+          pointRadius: 0
+        }]
+      },
+      options: {
+        responsive: true
+      }
+    });
+    $("#loading").hide();
+  })
+})
+
+
 /*CHECKBOXES*/
 
 $('#comp-dis').click(() => visibilityPlot($('#comp-dis').prop('checked'), 'dis'));
@@ -511,7 +566,7 @@ $( function() {
     range: true,
     min: min_year,
     max: max_year,
-    values: [ min_year, max_year ],
+    values: [ min_year, max_year-1 ],
     slide: function( event, ui ) {
       $("#years").val(ui.values[ 0 ] + " - " + ui.values[ 1 ]);
     }
@@ -524,9 +579,9 @@ $( function() {
 $(function() {
   $("#slider-range-min").slider({
     range: "min",
-    value: 80,
-    min: 2,
-    max: 730,
+    value: 6,
+    min: 1,
+    max: 12,
     slide: function( event, ui ) {
       $( "#days" ).val(ui.value );
     }

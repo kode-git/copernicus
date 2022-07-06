@@ -9,8 +9,8 @@
     <meta name="theme-color" content="#000000">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>BootLeaf</title>
-
+    <title>River Discharge</title>
+    
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.css">
@@ -25,6 +25,7 @@
     <link rel="apple-touch-icon" sizes="152x152"  href= "{{ url_for('static',filename='assets/img/favicon-152.png') }}">
     <link rel="apple-touch-icon" type="image/x-icon"  href= "{{ url_for('static',filename='assets/img/favicon.ico') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/boxicons/2.1.0/css/boxicons.min.css" integrity="sha512-pVCM5+SN2+qwj36KonHToF2p1oIvoU3bsqxphdOIWMYmgr4ZqD3t5DjKvvetKhXGc/ZG5REYTT6ltKfExEei/Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   </head>
 
   <body>
@@ -35,7 +36,6 @@
             <a href="#" class="navbar-icon pull-right visible-xs" id="nav-btn"><i class="fa fa-bars fa-lg white"></i></a>
             <a href="#" class="navbar-icon pull-right visible-xs" id="sidebar-toggle-btn"><i class="fa fa-search fa-lg white"></i></a>
           </div>
-          <a class="navbar-brand" href="#">BootLeaf</a>
         </div>
         <div class="navbar-collapse collapse">
           
@@ -56,11 +56,12 @@
               <div>
                 <div class="form-container">
                   <p>
-                    <label for="days">Days of prediction:</label>
+                    <label for="days">Months of prediction:</label>
                     <input type="text" id="days" readonly style="border:0; color:#0075FF; font-weight:100; width: 30px;">
                   </p>
                   <div id="slider-range-min"></div>
                   <button class = '' id = 'pred'>Predict</button>
+                  <button class = '' id = 'pred_live'>Predict Live</button>
                 </div>
                 <div class="sidebar-table" id="sidebar-table">
                   <table class="table table-hover" id="feature-list">
