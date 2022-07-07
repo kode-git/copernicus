@@ -2,7 +2,7 @@
 <p>
   <img src="https://img.shields.io/static/v1?label=build&message=passing&color=%3CCOLOR%3E" alt="alternatetext">
   <img src="https://img.shields.io/badge/version-1.0%20-red" alt="alternatetext">
-	<img src="https://img.shields.io/badge/state-production-orange" alt="alternatetext">
+	<img src="https://img.shields.io/badge/state-dev-orange" alt="alternatetext">
   <img src="https://img.shields.io/badge/python-3.9.13-blue" alt="alternatetext">
 </p>
 
