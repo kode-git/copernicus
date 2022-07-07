@@ -16,7 +16,7 @@ This study proposes an application to visually analyze river discharge changes o
 <p align="center">
 <img  width="480" height="270" src="demo.gif">
 </p><br>
-The demo on the left shows a simulation of the final application to retrieves information and prediction about a specific location of one of the ten major italian river in the North of Italy. An end user needs to click on one of the marker and visualize filtered information retrieved from our system. Furthermore, can execute an offline or online prediction to the selected point.
+The demo on the left shows a simulation of the final application to retrieve information and predict a specific location of one of the ten major Italian rivers in the North of Italy. An end-user needs to click on one of the markers and visualize filtered information retrieved from our system. Furthermore, it can execute an offline or online prediction to the selected point.
 
 ## How to Run
 The entire application runs on the a flask environment with Python 3.x; the final application in available online here. <br>
