@@ -1,8 +1,8 @@
 # Copernicus River Discharges Analysis
 <p>
-  <img src="https://img.shields.io/static/v1?label=build&message=passing&color=%3CCOLOR%3E" alt="alternatetext">
-  <img src="https://img.shields.io/badge/version-1.0%20-red" alt="alternatetext">
-	<img src="https://img.shields.io/badge/state-dev-orange" alt="alternatetext">
+  <img src="https://img.shields.io/static/v1?label=build&message=passing&color=yellow" alt="alternatetext">
+  <img src="https://img.shields.io/badge/version-0.1.1%20-red" alt="alternatetext">
+	<img src="https://img.shields.io/badge/state-production-%3CCOLOR%3E" alt="alternatetext">
   <img src="https://img.shields.io/badge/python-3.9.13-blue" alt="alternatetext">
 </p>
 
@@ -16,7 +16,7 @@ This study proposes an application to visually analyze river discharge changes o
 <p align="center">
 <img  width="480" height="270" src="demo.gif">
 </p><br>
-The demo on the left shows a simulation of the final application to retrieve information and predict a specific location of one of the ten major Italian rivers in the North of Italy. An end-user needs to click on one of the markers and visualize filtered information retrieved from our system. Furthermore, it can execute an offline or online prediction to the selected point.
+The demo on the left shows a simulation of the final application to retrieve information and predict a specific location of one of the ten major Italian rivers in the North of Italy. An end-user needs to click on one of the markers and visualize filtered information retrieved from our system. The final application is available at the following <a href="https://copernicus-river-discharges.herokuapp.com/"> link </a>.
 
 ## How to Run
 The entire application runs on the a flask environment with Python 3.x; the final application in available online here. <br>
