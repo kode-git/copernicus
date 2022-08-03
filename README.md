@@ -24,7 +24,7 @@ However, we have the possibility to run locally going to the /app directory and 
 ```
 flask run
 ```
-The server will start in a couple of minutes due to the large files loading. Be patient.
+The server will start in a couple of minutes due to the large files loading. Be patient. Request data on authors mail contacts to archive some test or run from yourself downloads data from <a href="https://cds.climate.copernicus.eu/cdsapp#!/dataset/efas-historical?tab=overview">CDH</a> and <a href="https://cds.climate.copernicus.eu/cdsapp#!/dataset/insitu-gridded-observations-global-and-regional?tab=overview">TPI</a>. <b> Warning:</b> Data needs parsing from NetCTF4, GRIB2 is not supported. If you want to run data from Sentinels satellites in a real-time environment, you must be aware that first and second notebooks need to change.
 
 ## Data Management and Analysis
 Due to the large size of notebook, Github may have some problem with the preview mode, we suggest to download notebooks locally and visualize in a jupyter local runtime also available in some plugin editors like Visual Studio Code. 
